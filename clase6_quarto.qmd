@@ -1,0 +1,143 @@
+---
+title: "Como usar quarto"
+author: "Erik Vilchez Bustamante"
+format: 
+  html:
+    toc: true
+    toc-location: left
+    number-sections: true
+    embed_resources: true
+    output-file: index
+---
+
+# Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
+
+
+# como usar quarto?
+## fuentes
+
+- negrita: **esto es fuente negrita**
+- cursiva: __solanum tuberosum__
+
+
+## formulas matematicas 
+
+Area de una circunferencia $Area_{circunferencia}=pi.r^2$
+
+esta es una formula cualquiera $$k=\frac{\left(2x-1\right)^2-1}{4}"$$
+
+
+
+# Mi primera pagina web
+1. Tener mi proyecto
+1. Conectar mi proyecto a GitHub 
+1. Tener un archivo en formato html llamado 'index.html'
+1. Hacer push al repositorio
+1. Activar GitHub Pages
+
+#importar archivo
+```{r}
+
+source('https://inkaverse.com/setup.r')
+url <- "https://docs.google.com/spreadsheets/d/15r7ZwcZZHbEgltlF6gSFvCTFA-CFzVBWwg3mFlRyKPs/edit?gid=172957346#gid=172957346"
+gs <- url %>% 
+  as_sheets_id()
+fb <- gs %>% 
+  range_read("fb")
+str(fb)
+
+
+```
+
+## Modelo lineal 
+```{r}
+modelo <- aov(formula = lfa ~ bloque + riego + geno + riego*geno
+              ,data = fb)
+anova(modelo)
+plot(modelo)
+
+```
+
+
+### boxplot
+
+```{r}
+ggplot(fb, aes(x = geno, y = lfa, colour = riego)) +
+  geom_boxplot(outlier.colour = "red" , outlier.shape = 16, outlier.size = 2) +
+  labs(title = "boxplot con interacción de niveles de riego y genotipo" , 
+       x = "Interacción Riego y Genotipo",
+       y = "Valor de la variable respuesta") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  #Inclinar etiquetas del eje x
+
+```
+
+#### modelo lineal para hi
+```{r}
+modelo <- aov(formula = hi ~ bloque + riego + geno + riego*geno
+              ,data = fb)
+anova(modelo)
+plot(modelo)
+```
+
+##### box plot hi
+```{r}
+ggplot(fb, aes(x = geno, y = hi, colour = riego)) +
+  geom_boxplot(outlier.colour = "red" , outlier.shape = 16, outlier.size = 2) +
+  labs(title = "boxplot con interacción de niveles de riego y genotipo" , 
+       x = "Interacción Riego y Genotipo",
+       y = "Valor de la variable respuesta") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  #Inclinar etiquetas del eje x
+
+```
+
+##modelos lineal mixtos para lfa
+```{r}
+library(lme4)
+modelo <- lme4::lmer(formula = lfa ~ riego + geno + riego*geno + (1|bloque)
+              ,data = fb)
+anova(modelo)
+plot(modelo)
+
+ol <- boxplot(lfa~riego*geno, fb)
+ol
+library(inti)
+model <- remove_outliers(data = fb
+                         ,formula = lfa ~ riego + geno + riego*geno + (1|bloque)
+              ,plot_diag = T
+              )
+model
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
