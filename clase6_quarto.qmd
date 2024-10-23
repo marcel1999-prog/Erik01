@@ -172,13 +172,53 @@ library(ggplot2)
 library(dplyr)
 library(tidyr)
 ggplot(grupos, aes(x = geno, y = lfa, fill = riego)) + 
-  geom_bar(stat = "identity" , position = "dodge", color = "black") + 
-  labs(x = "genotpo", y = "LFA", fill = "riego") + 
+  geom_bar(stat = "identity", position = "dodge", color = "black") + 
+  labs(x = "Genotipo", y = "LFA", fill = "Riego") + 
   theme_minimal() + 
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
-  ggtitle("Grafico de barras: LFA por genotipo y riego")
-```
+  ggtitle("Gráfico de barras: LFA por genotipo y riego") +
+  geom_text(aes(label = groups), 
+            position = position_dodge(0.9), 
+            vjust = -0.5)  # Ajusta la posición vertical de las letras
 
+```
+#emmeans: comparacion de medias 
+```{r}
+library(lme4)
+modelo <- lme4::lmer(formula = hi ~ riego + geno + riego*geno + (1|bloque)
+              ,data = fb)
+anova(modelo)
+
+
+library(emmeans)
+library(multcomp)
+cm1 <- emmeans(modelo, ~ geno | riego) %>% 
+  cld(letters = letters, reversed = T)
+cm1
+
+cm2 <- emmeans(modelo, ~ riego | geno) %>% 
+  cld(letters = letters, reversed = T)
+cm2
+
+cm3 <- emmeans(modelo, ~ riego * geno) %>% 
+   cld(letters = letters, reversed = T)
+cm3
+
+```
+```{r}
+dtcm <- as.data.frame(cm2) %>% 
+  rename(sig = ".group")
+
+ggplot(dtcm, aes(x = geno, y = emmean, fill = riego)) +
+  geom_bar(stat = "identity", position = "dodge", color = "black") +
+  geom_text(aes(label = sig, y = emmean*1*1),
+            position = position_dodge(width = 0.9),
+            vjust = 0) +
+  labs(x = "Genotipo", y = "HI", fill = "Riego") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  ggtitle("Gráfico de barras: LFA por genotipo y riego")
+```
 
 
 
