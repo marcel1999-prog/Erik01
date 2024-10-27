@@ -1,6 +1,6 @@
 ---
 title: "Pagina web unidad 2"
-author: "Vilchez Erik"
+author: "Erik Vichez, Jimmy Idrogo, Fernando Diaz"
 format: 
   html:
     toc: true
