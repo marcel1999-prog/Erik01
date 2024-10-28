@@ -62,9 +62,20 @@ anova(modelo)
 ### duncan
 ```{r}
 library(agricolae)
+library(agricolae)
+library(agricolae)
+
+# Ejecutar el test de Duncan
 duncan_riego_geno <- duncan.test(modelo, trt = c("riego","geno"), group = TRUE)
 print(duncan_riego_geno)
+
+# Verificar si existen grupos formados
 if (!is.null(duncan_riego_geno$groups)) {
+  # Modificar las etiquetas de la columna de grupos para mostrar solo las primeras 2 letras
+  duncan_riego_geno$groups <- duncan_riego_geno$groups %>%
+    dplyr::mutate(groups = substr(groups, 1, 2))  # Mostrar solo las 3 primeras letras de la etiqueta
+  
+  # Graficar
   plot(duncan_riego_geno)
 } else {
   cat("No se puede graficar, no hay grupos formados.")
@@ -73,12 +84,22 @@ if (!is.null(duncan_riego_geno$groups)) {
 ### tukey
 ```{r}
 library(agricolae)
-tukey_result <- HSD.test(modelo
-                             ,c("geno", "riego")
-                             , group = TRUE)
 
+# Ejecutar la prueba de Tukey
+tukey_result <- HSD.test(modelo, c("geno", "riego"), group = TRUE)
 print(tukey_result)
-plot(tukey_result)
+
+# Verificar si existen grupos formados
+if (!is.null(tukey_result$groups)) {
+  # Modificar los indicadores de diferenciación para mostrar solo las primeras 2 letras
+  tukey_result$groups$groups <- substr(tukey_result$groups$groups, 1, 2)
+  
+  # Graficar
+  plot(tukey_result)
+} else {
+  cat("No se puede graficar, no hay grupos formados.")
+}
+
 ```
 ```{r}
 tukey_result
@@ -99,7 +120,7 @@ ggplot(grupos, aes(x = geno, y = spad_29, fill = riego)) +
   theme_minimal() + 
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
   ggtitle("Gráfico de barras: spad_29 por genotipo y riego") +
-  geom_text(aes(label = groups), 
+  geom_text(aes(label = str_sub(groups, 1, 2)),  # Mostrar solo las primeras 2 letras
             position = position_dodge(0.9), 
             vjust = -0.5)  # Ajusta la posición vertical de las letras
 ```
