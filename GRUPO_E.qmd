@@ -19,6 +19,7 @@ fb <- gs %>%
   range_read("fb")
 str(fb)
 ```
+
 ## modelo lineal
 ```{r}
 modelo <- aov(formula = spad_29 ~ bloque + riego + geno + riego*geno
