@@ -8,6 +8,8 @@ format:
     number-sections: true
     embed_resources: true
     output-file: index
+editor_options: 
+  chunk_output_type: inline
 ---
 #Importar base de datos
 ```{r}
@@ -162,6 +164,80 @@ ggplot(dtcm, aes(x = geno, y = emmean, fill = riego)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   ggtitle("Gráfico de barras: spad_29 por genotipo y riego")
 ```
+## analisis multivariado (mas de dos variables
+```{r}
+library(tidyverse)
+library(corrplot)
+
+# Eliminar filas con NA y seleccionar solo columnas numéricas no vacías
+fb_clean <- fb %>%
+  select_if(~ is.numeric(.) && any(!is.na(.))) %>%  # Selecciona solo columnas numéricas con al menos un valor no NA
+  drop_na()  # Elimina filas con NA restantes
+
+# Verificar que hay columnas numéricas suficientes para calcular la correlación
+if (ncol(fb_clean) > 1) {
+  # Calcular la matriz de correlación
+  cor_matrix <- cor(fb_clean, use = "complete.obs")
+  
+  # Imprimir la matriz de correlación
+  print(cor_matrix)
+  
+  # Visualizar la matriz de correlación
+  corrplot(cor_matrix, method = "circle")
+} else {
+  cat("No hay suficientes columnas numéricas o datos completos para calcular la correlación.\n")
+}
+
+```
+## analisis multivariado
+```{r}
+library(psych)
+fb %>% 
+  select_if(is.numeric) %>% 
+  dplyr::select(!c("block")) %>% 
+  pairs.panels(x = .
+               , hist.col="red"
+               , pch = 21
+               , stars = TRUE
+               , scale = FALSE
+               , lm = TRUE
+               )
+```
+## PCA
+```{r}
+# Cargar las librerías necesarias
+library(FactoMineR)
+library(dplyr)
+library(ggplot2)
+library(gridExtra)
+
+# Agrupar y resumir los datos
+mv <- fb %>%
+  group_by(riego, geno) %>%
+  summarise(across(where(is.numeric), ~ mean(., na.rm = TRUE), .names = "mean_{col}")) %>%
+  ungroup()  # Desagrupar los datos después de resumir
+
+# Realizar el PCA, ajustando quali.sup a las columnas cualitativas (riego y geno)
+pca_result <- PCA(mv, scale.unit = TRUE, quali.sup = c(1, 2), graph = FALSE)
+
+# Graficar los individuos
+p1 <- plot.PCA(pca_result, habillage = "riego", title = "Gráfico de Individuos")
+
+# Graficar las variables
+p2 <- plot.PCA(pca_result, choix = "var", title = "Gráfico de Variables")
+
+# Combinar las gráficas en una sola
+grid.arrange(p1, p2, nrow = 1)
+
+```
+
+
+
+
+
+
+
+
 
 
 

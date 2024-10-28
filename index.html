@@ -89,6 +89,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#tukey" id="toc-tukey" class="nav-link" data-scroll-target="#tukey"><span class="header-section-number">4.2</span> tukey</a></li>
   <li><a href="#emmeans-comparacion-de-medias" id="toc-emmeans-comparacion-de-medias" class="nav-link" data-scroll-target="#emmeans-comparacion-de-medias"><span class="header-section-number">4.3</span> emmeans: comparacion de medias</a></li>
   </ul></li>
+  <li><a href="#analisis-multivariado-mas-de-dos-variables" id="toc-analisis-multivariado-mas-de-dos-variables" class="nav-link" data-scroll-target="#analisis-multivariado-mas-de-dos-variables"><span class="header-section-number">5</span> analisis multivariado (mas de dos variables</a></li>
+  <li><a href="#analisis-multivariado" id="toc-analisis-multivariado" class="nav-link" data-scroll-target="#analisis-multivariado"><span class="header-section-number">6</span> analisis multivariado</a></li>
+  <li><a href="#pca" id="toc-pca" class="nav-link" data-scroll-target="#pca"><span class="header-section-number">7</span> PCA</a></li>
   </ul>
 </nav>
 </div>
@@ -1166,6 +1169,145 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
+</section>
+<section id="analisis-multivariado-mas-de-dos-variables" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="analisis-multivariado-mas-de-dos-variables"><span class="header-section-number">5</span> analisis multivariado (mas de dos variables</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(corrplot)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Eliminar filas con NA y seleccionar solo columnas numéricas no vacías</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>fb_clean <span class="ot">&lt;-</span> fb <span class="sc">%&gt;%</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select_if</span>(<span class="sc">~</span> <span class="fu">is.numeric</span>(.) <span class="sc">&amp;&amp;</span> <span class="fu">any</span>(<span class="sc">!</span><span class="fu">is.na</span>(.))) <span class="sc">%&gt;%</span>  <span class="co"># Selecciona solo columnas numéricas con al menos un valor no NA</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>()  <span class="co"># Elimina filas con NA restantes</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Verificar que hay columnas numéricas suficientes para calcular la correlación</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">ncol</span>(fb_clean) <span class="sc">&gt;</span> <span class="dv">1</span>) {</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calcular la matriz de correlación</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>  cor_matrix <span class="ot">&lt;-</span> <span class="fu">cor</span>(fb_clean, <span class="at">use =</span> <span class="st">"complete.obs"</span>)</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Imprimir la matriz de correlación</span></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(cor_matrix)</span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Visualizar la matriz de correlación</span></span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">corrplot</span>(cor_matrix, <span class="at">method =</span> <span class="st">"circle"</span>)</span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"No hay suficientes columnas numéricas o datos completos para calcular la correlación.</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a><span class="do">##               block      spad_29     spad_83       rwc_84       op_84</span></span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a><span class="do">## block    1.00000000  0.020297706  0.05157597  0.008033140 -0.10231964</span></span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a><span class="do">## spad_29  0.02029771  1.000000000  0.14523944  0.006709501  0.12341708</span></span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a><span class="do">## spad_83  0.05157597  0.145239436  1.00000000 -0.374528084 -0.22948735</span></span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a><span class="do">## rwc_84   0.00803314  0.006709501 -0.37452808  1.000000000  0.57635594</span></span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a><span class="do">## op_84   -0.10231964  0.123417083 -0.22948735  0.576355944  1.00000000</span></span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a><span class="do">## leafdw   0.03708936  0.029866125  0.02659780  0.166241652  0.29327971</span></span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a><span class="do">## stemdw   0.02764730 -0.086066591  0.05998791 -0.032657508  0.06945152</span></span>
+<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a><span class="do">## rootdw  -0.01916446  0.321494560  0.38358101 -0.263783494 -0.05749859</span></span>
+<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a><span class="do">## tubdw    0.16073343 -0.159136398 -0.40105498  0.260742660  0.16170363</span></span>
+<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a><span class="do">## biomdw   0.13363294 -0.111659832 -0.23572155  0.196132929  0.20363811</span></span>
+<span id="cb22-33"><a href="#cb22-33" aria-hidden="true" tabindex="-1"></a><span class="do">## hi       0.15638220 -0.115135314 -0.51302605  0.237267355  0.05818117</span></span>
+<span id="cb22-34"><a href="#cb22-34" aria-hidden="true" tabindex="-1"></a><span class="do">## ttrans   0.06847173 -0.056829358 -0.29066112  0.318785712  0.34556360</span></span>
+<span id="cb22-35"><a href="#cb22-35" aria-hidden="true" tabindex="-1"></a><span class="do">## wue      0.15069384 -0.082027344  0.14377046 -0.327544603 -0.36531517</span></span>
+<span id="cb22-36"><a href="#cb22-36" aria-hidden="true" tabindex="-1"></a><span class="do">## twue     0.19761861 -0.117424881 -0.34394909  0.036235890 -0.11530021</span></span>
+<span id="cb22-37"><a href="#cb22-37" aria-hidden="true" tabindex="-1"></a><span class="do">## lfa      0.03059648 -0.037591565 -0.27947045  0.485494652  0.51534633</span></span>
+<span id="cb22-38"><a href="#cb22-38" aria-hidden="true" tabindex="-1"></a><span class="do">##              leafdw      stemdw      rootdw       tubdw     biomdw          hi</span></span>
+<span id="cb22-39"><a href="#cb22-39" aria-hidden="true" tabindex="-1"></a><span class="do">## block    0.03708936  0.02764730 -0.01916446  0.16073343  0.1336329  0.15638220</span></span>
+<span id="cb22-40"><a href="#cb22-40" aria-hidden="true" tabindex="-1"></a><span class="do">## spad_29  0.02986613 -0.08606659  0.32149456 -0.15913640 -0.1116598 -0.11513531</span></span>
+<span id="cb22-41"><a href="#cb22-41" aria-hidden="true" tabindex="-1"></a><span class="do">## spad_83  0.02659780  0.05998791  0.38358101 -0.40105498 -0.2357216 -0.51302605</span></span>
+<span id="cb22-42"><a href="#cb22-42" aria-hidden="true" tabindex="-1"></a><span class="do">## rwc_84   0.16624165 -0.03265751 -0.26378349  0.26074266  0.1961329  0.23726735</span></span>
+<span id="cb22-43"><a href="#cb22-43" aria-hidden="true" tabindex="-1"></a><span class="do">## op_84    0.29327971  0.06945152 -0.05749859  0.16170363  0.2036381  0.05818117</span></span>
+<span id="cb22-44"><a href="#cb22-44" aria-hidden="true" tabindex="-1"></a><span class="do">## leafdw   1.00000000  0.54016586  0.55299336  0.41870723  0.7597437 -0.34197634</span></span>
+<span id="cb22-45"><a href="#cb22-45" aria-hidden="true" tabindex="-1"></a><span class="do">## stemdw   0.54016586  1.00000000  0.34559635  0.09917462  0.5565391 -0.47791080</span></span>
+<span id="cb22-46"><a href="#cb22-46" aria-hidden="true" tabindex="-1"></a><span class="do">## rootdw   0.55299336  0.34559635  1.00000000 -0.11700388  0.2379613 -0.59973183</span></span>
+<span id="cb22-47"><a href="#cb22-47" aria-hidden="true" tabindex="-1"></a><span class="do">## tubdw    0.41870723  0.09917462 -0.11700388  1.00000000  0.8503650  0.61676659</span></span>
+<span id="cb22-48"><a href="#cb22-48" aria-hidden="true" tabindex="-1"></a><span class="do">## biomdw   0.75974368  0.55653907  0.23796129  0.85036500  1.0000000  0.16480490</span></span>
+<span id="cb22-49"><a href="#cb22-49" aria-hidden="true" tabindex="-1"></a><span class="do">## hi      -0.34197634 -0.47791080 -0.59973183  0.61676659  0.1648049  1.00000000</span></span>
+<span id="cb22-50"><a href="#cb22-50" aria-hidden="true" tabindex="-1"></a><span class="do">## ttrans   0.81729533  0.44296412  0.30930054  0.74443037  0.9038446  0.08493113</span></span>
+<span id="cb22-51"><a href="#cb22-51" aria-hidden="true" tabindex="-1"></a><span class="do">## wue     -0.17692519  0.32789345 -0.12582406  0.10753641  0.1367143  0.08840298</span></span>
+<span id="cb22-52"><a href="#cb22-52" aria-hidden="true" tabindex="-1"></a><span class="do">## twue    -0.34084015 -0.37075030 -0.54365961  0.58465861  0.1817833  0.89942081</span></span>
+<span id="cb22-53"><a href="#cb22-53" aria-hidden="true" tabindex="-1"></a><span class="do">## lfa      0.78596157  0.37948900  0.22797158  0.52699081  0.7098837 -0.04955964</span></span>
+<span id="cb22-54"><a href="#cb22-54" aria-hidden="true" tabindex="-1"></a><span class="do">##              ttrans         wue        twue         lfa</span></span>
+<span id="cb22-55"><a href="#cb22-55" aria-hidden="true" tabindex="-1"></a><span class="do">## block    0.06847173  0.15069384  0.19761861  0.03059648</span></span>
+<span id="cb22-56"><a href="#cb22-56" aria-hidden="true" tabindex="-1"></a><span class="do">## spad_29 -0.05682936 -0.08202734 -0.11742488 -0.03759157</span></span>
+<span id="cb22-57"><a href="#cb22-57" aria-hidden="true" tabindex="-1"></a><span class="do">## spad_83 -0.29066112  0.14377046 -0.34394909 -0.27947045</span></span>
+<span id="cb22-58"><a href="#cb22-58" aria-hidden="true" tabindex="-1"></a><span class="do">## rwc_84   0.31878571 -0.32754460  0.03623589  0.48549465</span></span>
+<span id="cb22-59"><a href="#cb22-59" aria-hidden="true" tabindex="-1"></a><span class="do">## op_84    0.34556360 -0.36531517 -0.11530021  0.51534633</span></span>
+<span id="cb22-60"><a href="#cb22-60" aria-hidden="true" tabindex="-1"></a><span class="do">## leafdw   0.81729533 -0.17692519 -0.34084015  0.78596157</span></span>
+<span id="cb22-61"><a href="#cb22-61" aria-hidden="true" tabindex="-1"></a><span class="do">## stemdw   0.44296412  0.32789345 -0.37075030  0.37948900</span></span>
+<span id="cb22-62"><a href="#cb22-62" aria-hidden="true" tabindex="-1"></a><span class="do">## rootdw   0.30930054 -0.12582406 -0.54365961  0.22797158</span></span>
+<span id="cb22-63"><a href="#cb22-63" aria-hidden="true" tabindex="-1"></a><span class="do">## tubdw    0.74443037  0.10753641  0.58465861  0.52699081</span></span>
+<span id="cb22-64"><a href="#cb22-64" aria-hidden="true" tabindex="-1"></a><span class="do">## biomdw   0.90384457  0.13671426  0.18178332  0.70988374</span></span>
+<span id="cb22-65"><a href="#cb22-65" aria-hidden="true" tabindex="-1"></a><span class="do">## hi       0.08493113  0.08840298  0.89942081 -0.04955964</span></span>
+<span id="cb22-66"><a href="#cb22-66" aria-hidden="true" tabindex="-1"></a><span class="do">## ttrans   1.00000000 -0.27920737 -0.05180976  0.86065462</span></span>
+<span id="cb22-67"><a href="#cb22-67" aria-hidden="true" tabindex="-1"></a><span class="do">## wue     -0.27920737  1.00000000  0.46506419 -0.36555108</span></span>
+<span id="cb22-68"><a href="#cb22-68" aria-hidden="true" tabindex="-1"></a><span class="do">## twue    -0.05180976  0.46506419  1.00000000 -0.20092298</span></span>
+<span id="cb22-69"><a href="#cb22-69" aria-hidden="true" tabindex="-1"></a><span class="do">## lfa      0.86065462 -0.36555108 -0.20092298  1.00000000</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="GRUPO_E_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:98.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="analisis-multivariado" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="analisis-multivariado"><span class="header-section-number">6</span> analisis multivariado</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(psych)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>fb <span class="sc">%&gt;%</span> </span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select_if</span>(is.numeric) <span class="sc">%&gt;%</span> </span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">!</span><span class="fu">c</span>(<span class="st">"block"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pairs.panels</span>(<span class="at">x =</span> .</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>               , <span class="at">hist.col=</span><span class="st">"red"</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>               , <span class="at">pch =</span> <span class="dv">21</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>               , <span class="at">stars =</span> <span class="cn">TRUE</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>               , <span class="at">scale =</span> <span class="cn">FALSE</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>               , <span class="at">lm =</span> <span class="cn">TRUE</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>               )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="GRUPO_E_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:98.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="pca" class="level2" data-number="7">
+<h2 data-number="7" class="anchored" data-anchor-id="pca"><span class="header-section-number">7</span> PCA</h2>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Cargar las librerías necesarias</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(FactoMineR)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gridExtra)</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Agrupar y resumir los datos</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>mv <span class="ot">&lt;-</span> fb <span class="sc">%&gt;%</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(riego, geno) <span class="sc">%&gt;%</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">mean</span>(., <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.names =</span> <span class="st">"mean_{col}"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>()  <span class="co"># Desagrupar los datos después de resumir</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Realizar el PCA, ajustando quali.sup a las columnas cualitativas (riego y geno)</span></span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>pca_result <span class="ot">&lt;-</span> <span class="fu">PCA</span>(mv, <span class="at">scale.unit =</span> <span class="cn">TRUE</span>, <span class="at">quali.sup =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>), <span class="at">graph =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Graficar los individuos</span></span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> <span class="fu">plot.PCA</span>(pca_result, <span class="at">habillage =</span> <span class="st">"riego"</span>, <span class="at">title =</span> <span class="st">"Gráfico de Individuos"</span>)</span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Graficar las variables</span></span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> <span class="fu">plot.PCA</span>(pca_result, <span class="at">choix =</span> <span class="st">"var"</span>, <span class="at">title =</span> <span class="st">"Gráfico de Variables"</span>)</span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Combinar las gráficas en una sola</span></span>
+<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a><span class="fu">grid.arrange</span>(p1, p2, <span class="at">nrow =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="GRUPO_E_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:98.0%"></p>
+</figure>
+</div>
+</div>
+</div>
 </section>
 
 </main>
