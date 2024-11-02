@@ -12,7 +12,7 @@ editor_options:
   chunk_output_type: inline
 ---
 
-# somos estudiantes de octavo siclo del curso de programacion y analisis de datos, el contenido de la siguiente pagina web es el procesamiento de una base de tatos con diferentes pruevas estadisticas. 
+## somos estudiantes de octavo siclo del curso de programacion y analisis de datos, el contenido de la siguiente pagina web es el procesamiento de una base de tatos con diferentes pruevas estadisticas. 
 
 #Importar base de datos
 
