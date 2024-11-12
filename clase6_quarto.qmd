@@ -31,30 +31,29 @@ You can add options to executable code like this
 
 The `echo: false` option disables the printing of code (only output is displayed).
 
-
 # como usar quarto?
+
 ## fuentes
 
-- negrita: **esto es fuente negrita**
-- cursiva: __solanum tuberosum__
+-   negrita: **esto es fuente negrita**
+-   cursiva: **solanum tuberosum**
 
-
-## formulas matematicas 
+## formulas matematicas
 
 Area de una circunferencia $Area_{circunferencia}=pi.r^2$
 
 esta es una formula cualquiera $$k=\frac{\left(2x-1\right)^2-1}{4}"$$
 
-
-
 # Mi primera pagina web
-1. Tener mi proyecto
-1. Conectar mi proyecto a GitHub 
-1. Tener un archivo en formato html llamado 'index.html'
-1. Hacer push al repositorio
-1. Activar GitHub Pages
+
+1.  Tener mi proyecto
+2.  Conectar mi proyecto a GitHub
+3.  Tener un archivo en formato html llamado 'index.html'
+4.  Hacer push al repositorio
+5.  Activar GitHub Pages
 
 #importar archivo
+
 ```{r}
 
 source('https://inkaverse.com/setup.r')
@@ -68,7 +67,8 @@ str(fb)
 
 ```
 
-## Modelo lineal 
+## Modelo lineal
+
 ```{r}
 modelo <- aov(formula = lfa ~ bloque + riego + geno + riego*geno
               ,data = fb)
@@ -76,7 +76,6 @@ anova(modelo)
 plot(modelo)
 
 ```
-
 
 ### boxplot
 
@@ -92,6 +91,7 @@ ggplot(fb, aes(x = geno, y = lfa, colour = riego)) +
 ```
 
 ### modelo lineal para hi
+
 ```{r}
 modelo <- aov(formula = hi ~ bloque + riego + geno + riego*geno
               ,data = fb)
@@ -100,6 +100,7 @@ plot(modelo)
 ```
 
 ### box plot hi
+
 ```{r}
 ggplot(fb, aes(x = geno, y = hi, colour = riego)) +
   geom_boxplot(outlier.colour = "red" , outlier.shape = 16, outlier.size = 2) +
@@ -112,6 +113,7 @@ ggplot(fb, aes(x = geno, y = hi, colour = riego)) +
 ```
 
 ## modelos lineal mixtos para lfa
+
 ```{r}
 library(lme4)
 modelo <- lme4::lmer(formula = lfa ~ riego + geno + riego*geno + (1|bloque)
@@ -130,12 +132,15 @@ model
 ```
 
 ## comparacion de medias
+
 ```{r}
 modelo <- aov(formula = lfa ~ bloque + riego + geno + riego*geno
               ,data = fb)
 anova(modelo)
 ```
+
 ### duncan
+
 ```{r}
 library(agricolae)
 duncan_riego_geno <- duncan.test(modelo, trt = c("riego","geno"), group = TRUE)
@@ -146,7 +151,9 @@ if (!is.null(duncan_riego_geno$groups)) {
   cat("No se puede graficar, no hay grupos formados.")
 }
 ```
+
 ### tukey
+
 ```{r}
 library(agricolae)
 tukey_result <- HSD.test(modelo
@@ -182,7 +189,9 @@ ggplot(grupos, aes(x = geno, y = lfa, fill = riego)) +
             vjust = -0.5)  # Ajusta la posición vertical de las letras
 
 ```
-## emmeans: comparacion de medias 
+
+## emmeans: comparacion de medias
+
 ```{r}
 library(lme4)
 modelo <- lme4::lmer(formula = hi ~ riego + geno + riego*geno + (1|bloque)
@@ -205,6 +214,7 @@ cm3 <- emmeans(modelo, ~ riego * geno) %>%
 cm3
 
 ```
+
 ```{r}
 dtcm <- as.data.frame(cm2) %>% 
   rename(sig = ".group")
@@ -243,7 +253,9 @@ if (ncol(fb_clean) > 1) {
   cat("No hay suficientes columnas numéricas o datos completos para calcular la correlación.\n")
 }
 ```
+
 ## analisis multivariado
+
 ```{r}
 library(psych)
 fb %>% 
@@ -259,6 +271,7 @@ fb %>%
 ```
 
 ## PCA
+
 ```{r}
 library(FactoMineR)
 library(dplyr)
@@ -283,28 +296,3 @@ p2 <- plot.PCA(pca_result, choix = "var", title = "Gráfico de Variables")
 # Combinar las gráficas en una sola
 grid.arrange(p1, p2, nrow = 1)
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
